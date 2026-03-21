@@ -21,7 +21,10 @@
   </a>
   <div class="header-right">
     <a href="{% url 'item_add' %}" class="btn-icon" title="Add Item">＋</a>
-    <a href="{% url 'logout' %}" class="btn-icon" title="Logout">⏻</a>
+    <form action="{% url 'logout' %}" method="post" style="display:inline">
+      {% csrf_token %}
+      <button type="submit" class="btn-icon" title="Logout">⏻</button>
+    </form>
   </div>
 </header>
 

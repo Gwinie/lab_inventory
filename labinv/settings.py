@@ -12,6 +12,8 @@ SECRET_KEY = 'django-insecure-labinv-change-this-in-production-xyz123abc'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+# In Django 4.0+, add your host (e.g., 'http://192.168.1.5:8000') to allow mobile access
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

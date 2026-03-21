@@ -75,6 +75,8 @@ img { max-width: 100%; display: block; }
   font-size: 1rem;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
+  padding: 0;
+  outline: none;
   transition: background .2s;
 }
 .btn-icon:hover { background: var(--bg-card2); }
