@@ -1,0 +1,23 @@
+{% extends "inventory/base.html" %}
+{% block title %}{{ action }} Location – LabInv{% endblock %}
+{% block content %}
+<div class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <a href="{% url 'location_list' %}" class="btn btn-ghost" style="padding:8px 14px">← Back</a>
+    <h2 style="font-size:1.15rem;font-weight:700">{{ action }} Location</h2>
+  </div>
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p style="color:var(--red);font-size:.82rem;margin-top:4px">{{ field.errors|join:", " }}</p>{% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px">💾 Save</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

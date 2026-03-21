@@ -1,0 +1,29 @@
+{% extends "inventory/base.html" %}
+{% block title %}Transaction History – LabInv{% endblock %}
+{% block content %}
+<div class="page">
+  <p class="section-title">Last 100 Transactions</p>
+  {% if transactions %}
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="tx-list" style="padding:12px">
+      {% for tx in transactions %}
+      <div class="tx-row">
+        <div class="tx-dot {{ tx.transaction_type }}">
+          {% if tx.transaction_type == 'in' %}⬆️{% elif tx.transaction_type == 'out' %}⬇️{% else %}🔄{% endif %}
+        </div>
+        <div class="tx-info">
+          <div class="tx-main"><a href="{% url 'item_detail' tx.item.pk %}" style="color:var(--text)">{{ tx.item.name }}</a></div>
+          <div class="tx-sub">{{ tx.timestamp|date:"M d, Y H:i" }} · {{ tx.performed_by.username|default:"—" }}{% if tx.notes %} · {{ tx.notes }}{% endif %}</div>
+        </div>
+        <div class="tx-change {% if tx.quantity_change > 0 %}positive{% else %}negative{% endif %}">
+          {% if tx.quantity_change > 0 %}+{% endif %}{{ tx.quantity_change }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="icon">📋</div><p>No transactions yet.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

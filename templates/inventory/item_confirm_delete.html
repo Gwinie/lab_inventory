@@ -1,0 +1,16 @@
+{% extends "inventory/base.html" %}
+{% block title %}Delete {{ item.name }} – LabInv{% endblock %}
+{% block content %}
+<div class="page">
+  <div class="card" style="text-align:center;padding:36px 24px">
+    <div style="font-size:3rem;margin-bottom:12px">🗑️</div>
+    <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:8px">Delete Item?</h2>
+    <p style="color:var(--text-muted);margin-bottom:24px">Are you sure you want to delete <strong>{{ item.name }}</strong>? This will also delete all transaction history for this item. This cannot be undone.</p>
+    <form method="post" style="display:flex;gap:10px">
+      {% csrf_token %}
+      <a href="{% url 'item_detail' item.pk %}" class="btn btn-ghost" style="flex:1">Cancel</a>
+      <button type="submit" class="btn btn-danger" style="flex:1">Delete</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

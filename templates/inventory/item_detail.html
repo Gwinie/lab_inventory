@@ -1,0 +1,111 @@
+{% extends "inventory/base.html" %}
+{% block title %}{{ item.name }} – LabInv{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <!-- Hero -->
+  <div class="detail-hero">
+    <div class="detail-name">{{ item.name }}</div>
+    <div class="detail-sku">SKU: {{ item.sku }}</div>
+    <div class="detail-qty status-{{ item.stock_status }}">{{ item.quantity }}</div>
+    <div style="color:var(--text-muted);font-size:.85rem">{{ item.unit }} in stock</div>
+    <div style="margin-top:12px">
+      <span class="badge badge-{{ item.stock_status }}">
+        {% if item.stock_status == 'out' %}🚫 Out of Stock{% elif item.stock_status == 'low' %}⚠️ Low Stock{% else %}✅ In Stock{% endif %}
+      </span>
+      {% if item.category %}
+      <span class="badge badge-in" style="margin-left:6px;background:{{ item.category.color }}20;color:{{ item.category.color }}">
+        <span class="color-dot" style="background:{{ item.category.color }}"></span>{{ item.category.name }}
+      </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="action-grid">
+    <!-- Check In Panel -->
+    <div class="card" style="padding:16px">
+      <div class="card-title" style="margin-bottom:12px;color:var(--green)">⬆️ Check In</div>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="checkin"/>
+        <input type="number" name="quantity" value="1" min="1" class="form-control big-input" id="checkin-qty"/>
+        <input type="text" name="notes" class="form-control" placeholder="Notes…" style="margin-top:8px"/>
+        <button type="submit" class="btn btn-success btn-full" style="margin-top:10px">＋ Check In</button>
+      </form>
+    </div>
+
+    <!-- Check Out Panel -->
+    <div class="card" style="padding:16px">
+      <div class="card-title" style="margin-bottom:12px;color:var(--red)">⬇️ Check Out</div>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="checkout"/>
+        <input type="number" name="quantity" value="1" min="1" max="{{ item.quantity }}" class="form-control big-input" id="checkout-qty"/>
+        <input type="text" name="notes" class="form-control" placeholder="Notes…" style="margin-top:8px"/>
+        <button type="submit" class="btn btn-danger btn-full" style="margin-top:10px" {% if item.quantity == 0 %}disabled{% endif %}>– Check Out</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Info Card -->
+  <div class="card">
+    <div class="card-title">ℹ️ Item Details</div>
+    <table style="width:100%">
+      <tr><td style="color:var(--text-muted);width:40%">Location</td><td>{{ item.location.name|default:"–" }}</td></tr>
+      <tr><td style="color:var(--text-muted)">Min. Qty</td><td>{{ item.minimum_quantity }} {{ item.unit }}</td></tr>
+      <tr><td style="color:var(--text-muted)">Added</td><td>{{ item.created_at|date:"M d, Y" }}</td></tr>
+      <tr><td style="color:var(--text-muted)">Updated</td><td>{{ item.updated_at|date:"M d, Y H:i" }}</td></tr>
+      {% if item.description %}
+      <tr><td style="color:var(--text-muted)">Notes</td><td>{{ item.description }}</td></tr>
+      {% endif %}
+    </table>
+  </div>
+
+  <!-- QR Code -->
+  {% if item.qr_code %}
+  <div class="card" style="text-align:center">
+    <div class="card-title" style="justify-content:center">📲 QR Code</div>
+    <div class="qr-box" style="display:inline-block">
+      <img src="{{ item.qr_code.url }}" alt="QR Code for {{ item.sku }}" style="width:160px;height:160px"/>
+    </div>
+    <p style="color:var(--text-muted);font-size:.8rem;margin-top:8px">Scan to jump to this item</p>
+  </div>
+  {% endif %}
+
+  <!-- Transaction History -->
+  <p class="section-title">Transaction History</p>
+  {% if transactions %}
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="tx-list" style="padding:12px">
+      {% for tx in transactions %}
+      <div class="tx-row">
+        <div class="tx-dot {{ tx.transaction_type }}">
+          {% if tx.transaction_type == 'in' %}⬆️{% elif tx.transaction_type == 'out' %}⬇️{% else %}🔄{% endif %}
+        </div>
+        <div class="tx-info">
+          <div class="tx-main">{{ tx.get_transaction_type_display }}: {{ tx.quantity_before }} → {{ tx.quantity_after }}</div>
+          <div class="tx-sub">{{ tx.timestamp|date:"M d, Y H:i" }} · {{ tx.performed_by.username|default:"—" }}{% if tx.notes %} · {{ tx.notes }}{% endif %}</div>
+        </div>
+        <div class="tx-change {% if tx.quantity_change > 0 %}positive{% else %}negative{% endif %}">
+          {% if tx.quantity_change > 0 %}+{% endif %}{{ tx.quantity_change }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state" style="padding:24px">
+    <p>No transactions yet for this item.</p>
+  </div>
+  {% endif %}
+
+  <!-- Actions -->
+  <div style="display:flex;gap:10px;margin-top:8px">
+    <a href="{% url 'item_edit' item.pk %}" class="btn btn-ghost" style="flex:1">✏️ Edit</a>
+    <a href="{% url 'item_delete' item.pk %}" class="btn btn-danger" style="flex:1">🗑️ Delete</a>
+  </div>
+
+</div>
+{% endblock %}

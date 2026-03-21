@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Lab Inventory{% endblock %}</title>
+  <meta name="description" content="Lab Inventory Management System"/>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}"/>
+  <link rel="manifest" href="{% static 'manifest.json' %}" />
+  <meta name="theme-color" content="#0d1117"/>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <a href="{% url 'dashboard' %}" class="logo" style="text-decoration:none">
+    <span class="icon">🧪</span>
+    <span>LabInv</span>
+  </a>
+  <div class="header-right">
+    <a href="{% url 'item_add' %}" class="btn-icon" title="Add Item">＋</a>
+    <a href="{% url 'logout' %}" class="btn-icon" title="Logout">⏻</a>
+  </div>
+</header>
+
+<!-- Messages -->
+{% if messages %}
+<div class="page" style="padding-bottom:0;padding-top:12px">
+  <ul class="messages">
+    {% for msg in messages %}
+    <li class="{{ msg.tags }}">{{ msg }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<!-- Content -->
+{% block content %}{% endblock %}
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a href="{% url 'dashboard' %}" class="nav-item {% if page == 'dashboard' %}active{% endif %}">
+    <span class="nav-icon">🏠</span>
+    <span>Home</span>
+  </a>
+  <a href="{% url 'item_list' %}" class="nav-item {% if page == 'items' %}active{% endif %}">
+    <span class="nav-icon">📦</span>
+    <span>Items</span>
+  </a>
+  <a href="{% url 'qr_scanner' %}" class="nav-fab" title="Scan QR">📷</a>
+  <a href="{% url 'transaction_history' %}" class="nav-item {% if page == 'history' %}active{% endif %}">
+    <span class="nav-icon">📋</span>
+    <span>History</span>
+  </a>
+  <a href="{% url 'category_list' %}" class="nav-item {% if page == 'settings' %}active{% endif %}">
+    <span class="nav-icon">⚙️</span>
+    <span>Settings</span>
+  </a>
+</nav>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

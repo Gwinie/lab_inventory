@@ -1,0 +1,94 @@
+{% extends "inventory/base.html" %}
+{% block title %}Dashboard – LabInv{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <p class="section-title">Overview · {{ request.user.get_full_name|default:request.user.username }}</p>
+
+  <div class="stats-grid">
+    <div class="stat-card accent">
+      <span class="stat-value">{{ total_items }}</span>
+      <span class="stat-label">Total Items</span>
+    </div>
+    <div class="stat-card green">
+      <span class="stat-value">{{ total_categories }}</span>
+      <span class="stat-label">Categories</span>
+    </div>
+    <div class="stat-card amber">
+      <span class="stat-value">{{ low_stock_count }}</span>
+      <span class="stat-label">Low Stock</span>
+    </div>
+    <div class="stat-card red">
+      <span class="stat-value">{{ out_of_stock }}</span>
+      <span class="stat-label">Out of Stock</span>
+    </div>
+  </div>
+
+  <div class="stats-grid" style="margin-top:12px">
+    <div class="stat-card green">
+      <span class="stat-value">+{{ recent_checkins }}</span>
+      <span class="stat-label">Checked In (7d)</span>
+    </div>
+    <div class="stat-card red">
+      <span class="stat-value">-{{ recent_checkouts }}</span>
+      <span class="stat-label">Checked Out (7d)</span>
+    </div>
+  </div>
+
+  {% if low_stock_items %}
+  <p class="section-title" style="margin-top:28px">⚠️ Needs Attention</p>
+  <div class="item-list">
+    {% for item in low_stock_items %}
+    <a href="{% url 'item_detail' item.pk %}" class="item-card">
+      <div class="item-icon">
+        {% if item.stock_status == 'out' %}🚫{% elif item.stock_status == 'low' %}⚠️{% else %}📦{% endif %}
+      </div>
+      <div class="item-info">
+        <div class="item-name">{{ item.name }}</div>
+        <div class="item-meta">{{ item.sku }} · {{ item.category.name|default:"–" }}</div>
+      </div>
+      <div class="item-qty">
+        <span class="{% if item.stock_status == 'out' %}badge badge-out{% else %}badge badge-low{% endif %}">
+          {{ item.quantity }} {{ item.unit }}
+        </span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <p class="section-title" style="margin-top:28px">🕐 Recent Activity</p>
+  {% if recent_transactions %}
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="tx-list" style="padding:12px">
+      {% for tx in recent_transactions %}
+      <div class="tx-row">
+        <div class="tx-dot {{ tx.transaction_type }}">
+          {% if tx.transaction_type == 'in' %}⬆️{% elif tx.transaction_type == 'out' %}⬇️{% else %}🔄{% endif %}
+        </div>
+        <div class="tx-info">
+          <div class="tx-main">{{ tx.item.name }}</div>
+          <div class="tx-sub">{{ tx.timestamp|date:"M d, H:i" }} · {{ tx.performed_by.username|default:"system" }}</div>
+        </div>
+        <div class="tx-change {% if tx.quantity_change > 0 %}positive{% else %}negative{% endif %}">
+          {% if tx.quantity_change > 0 %}+{% endif %}{{ tx.quantity_change }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">📋</div>
+    <p>No activity yet. Start by checking items in or out.</p>
+  </div>
+  {% endif %}
+
+  <div style="margin-top:20px;display:flex;gap:10px">
+    <a href="{% url 'item_add' %}" class="btn btn-primary" style="flex:1">＋ Add Item</a>
+    <a href="{% url 'qr_scanner' %}" class="btn btn-ghost" style="flex:1">📷 Scan QR</a>
+  </div>
+
+</div>
+{% endblock %}

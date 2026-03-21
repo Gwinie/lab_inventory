@@ -1,0 +1,34 @@
+{% extends "inventory/base.html" %}
+{% block title %}{{ action }} Item – LabInv{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <a href="{% if item %}{% url 'item_detail' item.pk %}{% else %}{% url 'item_list' %}{% endif %}" class="btn btn-ghost" style="padding:8px 14px">← Back</a>
+    <h2 style="font-size:1.15rem;font-weight:700">{{ action }} Item</h2>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <p style="color:var(--text-muted);font-size:.78rem;margin-top:4px">{{ field.help_text }}</p>
+        {% endif %}
+        {% if field.errors %}
+        <p style="color:var(--red);font-size:.82rem;margin-top:4px">{{ field.errors|join:", " }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:8px">
+        {% if action == 'Add' %}＋ Add Item{% else %}💾 Save Changes{% endif %}
+      </button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

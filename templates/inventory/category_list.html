@@ -1,0 +1,53 @@
+{% extends "inventory/base.html" %}
+{% block title %}Categories – LabInv{% endblock %}
+{% block content %}
+<div class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <p class="section-title" style="margin:0">Categories</p>
+    <a href="{% url 'category_add' %}" class="btn btn-primary" style="padding:8px 16px;font-size:.85rem">＋ Add</a>
+  </div>
+  {% if categories %}
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Items</th><th></th></tr></thead>
+        <tbody>
+          {% for cat in categories %}
+          <tr>
+            <td><span class="color-dot" style="background:{{ cat.color }}"></span>{{ cat.name }}</td>
+            <td>{{ cat.item_count }}</td>
+            <td style="text-align:right"><a href="{% url 'category_edit' cat.pk %}" class="btn btn-ghost" style="padding:4px 10px;font-size:.8rem">Edit</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="icon">🏷️</div><p>No categories yet. <a href="{% url 'category_add' %}">Add one →</a></p></div>
+  {% endif %}
+
+  <div style="margin-top:28px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <p class="section-title" style="margin:0">Locations</p>
+    <a href="{% url 'location_add' %}" class="btn btn-primary" style="padding:8px 16px;font-size:.85rem">＋ Add</a>
+  </div>
+  {% if locations %}
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Items</th><th></th></tr></thead>
+        <tbody>
+          {% for loc in locations %}
+          <tr>
+            <td>📍 {{ loc.name }}</td>
+            <td>{{ loc.item_count }}</td>
+            <td style="text-align:right"><a href="{% url 'location_edit' loc.pk %}" class="btn btn-ghost" style="padding:4px 10px;font-size:.8rem">Edit</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

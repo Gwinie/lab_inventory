@@ -1,0 +1,62 @@
+{% extends "inventory/base.html" %}
+{% block title %}QR Scanner – LabInv{% endblock %}
+
+{% block content %}
+<div class="page" style="text-align:center">
+
+  <p class="section-title" style="text-align:center;margin-top:8px">Point camera at item QR code</p>
+
+  <div class="scanner-wrap">
+    <div id="reader"></div>
+  </div>
+
+  <p class="scanner-hint">Hold the QR code steady within the frame</p>
+
+  <div id="scan-result" style="display:none" class="card" style="margin-top:16px">
+    <p style="font-weight:600">✅ Code Detected</p>
+    <p id="scan-text" style="color:var(--text-muted);font-size:.9rem;margin-top:4px"></p>
+    <a id="scan-link" href="#" class="btn btn-primary btn-full" style="margin-top:12px">Open Item →</a>
+  </div>
+
+  <div style="margin-top:24px">
+    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:12px">Or look up by SKU manually:</p>
+    <form action="{% url 'qr_lookup' %}" method="get" style="display:flex;gap:8px">
+      <input type="text" name="sku" class="form-control" placeholder="Enter SKU manually…" style="flex:1"/>
+      <button type="submit" class="btn btn-primary">Go</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+const lookupBase = "{% url 'qr_lookup' %}";
+
+function onScanSuccess(decodedText, decodedResult) {
+  // Expected format: LABITEM:<SKU>:<name>  or just bare SKU
+  let sku = decodedText;
+  if (decodedText.startsWith('LABITEM:')) {
+    sku = decodedText.split(':')[1];
+  }
+
+  document.getElementById('scan-result').style.display = 'block';
+  document.getElementById('scan-text').textContent = 'SKU: ' + sku;
+  const link = lookupBase + '?sku=' + encodeURIComponent(sku);
+  document.getElementById('scan-link').href = link;
+
+  // Auto redirect after short delay
+  setTimeout(() => { window.location.href = link; }, 800);
+}
+
+function onScanFailure(error) { /* ignore */ }
+
+const html5QrCode = new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+  false
+);
+html5QrCode.render(onScanSuccess, onScanFailure);
+</script>
+{% endblock %}
