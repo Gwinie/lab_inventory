@@ -19,11 +19,18 @@
     <span class="icon">🧪</span>
     <span>LabInv</span>
   </a>
+  <nav class="header-nav">
+    <a href="{% url 'dashboard' %}" class="{% if page == 'dashboard' %}active{% endif %}">Home</a>
+    <a href="{% url 'item_list' %}" class="{% if page == 'items' %}active{% endif %}">Items</a>
+    <a href="{% url 'qr_scanner' %}">Scan</a>
+    <a href="{% url 'transaction_history' %}" class="{% if page == 'history' %}active{% endif %}">History</a>
+    <a href="{% url 'category_list' %}" class="{% if page == 'settings' %}active{% endif %}">Settings</a>
+  </nav>
   <div class="header-right">
-    <a href="{% url 'item_add' %}" class="btn-icon" title="Add Item">＋</a>
+    <a href="{% url 'item_add' %}" class="btn-icon btn-prominent-add" title="Add Item">＋</a>
     <form action="{% url 'logout' %}" method="post" style="display:inline">
       {% csrf_token %}
-      <button type="submit" class="btn-icon" title="Logout">⏻</button>
+      <button type="submit" class="btn-icon btn-prominent-logout" title="Logout">⏻</button>
     </form>
   </div>
 </header>
@@ -64,5 +71,13 @@
 </nav>
 
 {% block scripts %}{% endblock %}
+<script>
+  function applyDataStyles() {
+    document.querySelectorAll('[data-bg]').forEach(el => el.style.backgroundColor = el.dataset.bg);
+    document.querySelectorAll('[data-badge-bg]').forEach(el => el.style.backgroundColor = el.dataset.badgeBg);
+    document.querySelectorAll('[data-badge-color]').forEach(el => el.style.color = el.dataset.badgeColor);
+  }
+  document.addEventListener('DOMContentLoaded', applyDataStyles);
+</script>
 </body>
 </html>

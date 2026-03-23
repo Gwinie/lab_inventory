@@ -57,7 +57,7 @@ class Item(models.Model):
 
     @property
     def is_low_stock(self):
-        return self.quantity <= self.minimum_quantity
+        return 0 < self.quantity <= self.minimum_quantity
 
     @property
     def stock_status(self):

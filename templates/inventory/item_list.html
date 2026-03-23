@@ -8,48 +8,56 @@
     <div class="search-bar">
       <span class="search-icon">🔍</span>
       <input type="text" name="q" value="{{ q }}" placeholder="Search items by name or SKU…" id="search-input"/>
+      <button type="submit" class="btn btn-primary desktop-only" style="padding:8px 20px">Search</button>
     </div>
-    <div class="filter-row">
-      <a href="?" class="filter-chip {% if not stock_filter and not selected_category and not selected_location %}active{% endif %}">All</a>
-      <a href="?stock=low{% if q %}&q={{ q }}{% endif %}" class="filter-chip {% if stock_filter == 'low' %}active{% endif %}">⚠️ Low Stock</a>
-      <a href="?stock=out{% if q %}&q={{ q }}{% endif %}" class="filter-chip {% if stock_filter == 'out' %}active{% endif %}">🚫 Out</a>
-      {% for cat in categories %}
-      <a href="?category={{ cat.pk }}{% if q %}&q={{ q }}{% endif %}" class="filter-chip {% if selected_category == cat.pk|stringformat:'s' %}active{% endif %}">
-        <span class="color-dot" style="background:{{ cat.color }}"></span>{{ cat.name }}
-      </a>
-      {% endfor %}
-    </div>
-  </form>
-
-  {% if items %}
+    
+    <div class="grid-2-1" style="align-items: flex-start; gap: 24px;">
+      <div class="main-col">
+{% if items %}
   <div class="item-list">
     {% for item in items %}
     <a href="{% url 'item_detail' item.pk %}" class="item-card">
       <div class="item-icon">📦</div>
       <div class="item-info">
         <div class="item-name">{{ item.name }}</div>
-        <div class="item-meta">
-          {{ item.sku }}
-          {% if item.category %} · <span class="color-dot" style="background:{{ item.category.color }}"></span>{{ item.category.name }}{% endif %}
-          {% if item.location %} · 📍{{ item.location.name }}{% endif %}
-        </div>
+        <div class="item-meta">{{ item.sku }} · {{ item.category.name|default:"–" }}</div>
       </div>
       <div>
-        <div class="item-qty {% if item.stock_status == 'out' %}" style="color:#ef4444"{% elif item.stock_status == 'low' %}" style="color:#f59e0b"{% else %}"{% endif %}>{{ item.quantity }}</div>
+        <div class="item-qty 
+          {% if item.stock_status == 'out' %}text-red{% elif item.stock_status == 'low' %}text-amber{% endif %}">
+          {{ item.quantity }}
+        </div>
         <span class="qty-unit">{{ item.unit }}</span>
-        <span class="badge badge-{{ item.stock_status }}" style="margin-top:4px;display:block">{{ item.stock_status }}</span>
       </div>
     </a>
     {% endfor %}
   </div>
-  {% else %}
+{% else %}
   <div class="empty-state">
     <div class="icon">📦</div>
     <p>No items found.<br/>
     <a href="{% url 'item_add' %}" class="btn btn-primary" style="margin-top:16px;display:inline-flex">＋ Add First Item</a>
     </p>
   </div>
-  {% endif %}
+{% endif %}
+      </div>
 
+      <div class="side-col">
+        <p class="section-title" style="margin-top:0">Filter Results</p>
+        <div class="filter-list">
+          <a href="?" class="filter-chip {% if not stock_filter and not selected_category %}active{% endif %}">All Items</a>
+          <a href="?stock=low{% if q %}&q={{ q }}{% endif %}" class="filter-chip {% if stock_filter == 'low' %}active{% endif %}">⚠️ Low Stock</a>
+          <a href="?stock=out{% if q %}&q={{ q }}{% endif %}" class="filter-chip {% if stock_filter == 'out' %}active{% endif %}">🚫 Out of Stock</a>
+          
+          <p class="section-title" style="margin-top:20px">Categories</p>
+          {% for cat in categories %}
+          <a href="?category={{ cat.pk }}{% if q %}&q={{ q }}{% endif %}" class="filter-chip {% if selected_category == cat.pk|stringformat:'s' %}active{% endif %}">
+            <span class="color-dot" data-bg="{{ cat.color }}"></span>{{ cat.name }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 {% endblock %}
