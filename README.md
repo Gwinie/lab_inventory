@@ -36,6 +36,7 @@ A modern, mobile-friendly Django application for managing laboratory inventory, 
 3. **Configure environment variables**:
 
    Copy `.env.example` to `.env` and fill in your details (e.g., SECRET_KEY, DEBUG, etc.):
+
    ```bash
    cp .env.example .env
    ```
@@ -46,13 +47,13 @@ A modern, mobile-friendly Django application for managing laboratory inventory, 
    python manage.py migrate
    ```
 
-4. **Create a superuser** (to access the admin panel):
+5. **Create a superuser** (to access the admin panel):
 
    ```bash
    python manage.py createsuperuser
    ```
 
-5. **Start the development server**:
+6. **Start the development server**:
 
    ```bash
    python manage.py runserver
