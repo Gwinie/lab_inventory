@@ -33,7 +33,14 @@ A modern, mobile-friendly Django application for managing laboratory inventory, 
    pip install -r requirements.txt
    ```
 
-3. **Run migrations**:
+3. **Configure environment variables**:
+
+   Copy `.env.example` to `.env` and fill in your details (e.g., SECRET_KEY, DEBUG, etc.):
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Run migrations**:
 
    ```bash
    python manage.py migrate
@@ -71,4 +78,4 @@ This app is designed to be used on the go:
 
 ### System Version
 
-Built with Django 3.1.7
+Built with Django 5.0.14
